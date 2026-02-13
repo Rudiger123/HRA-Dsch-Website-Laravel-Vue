@@ -10,8 +10,11 @@ use Inertia\Inertia;
 */
 
 // Page d'accueil
+use App\Models\Service;
 Route::get('/', function () {
-    return Inertia::render('Home');
+    return Inertia::render('Home', [
+        'services' => Service::actif()->ordonne()->get()
+    ]);
 })->name('home');
 
 // Routes à venir
