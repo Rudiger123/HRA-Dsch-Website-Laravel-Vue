@@ -70,18 +70,16 @@ const animateStats = () => {
 
 <template>
     <AppLayout>
-        <!-- Hero Section PREMIUM avec gradient animé -->
-        <section class="relative overflow-hidden">
-            <!-- Gradient animé -->
-            <div class="absolute inset-0 bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800">
-                <!-- Formes géométriques animées (cercles flottants) -->
-                <div class="absolute top-20 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-blob"></div>
-                <div
-                    class="absolute top-40 right-20 w-96 h-96 bg-secondary-500/20 rounded-full blur-3xl animate-blob animation-delay-2000">
-                </div>
-                <div
-                    class="absolute bottom-20 left-1/3 w-80 h-80 bg-white/10 rounded-full blur-3xl animate-blob animation-delay-4000">
-                </div>
+        <!-- Hero Section PREMIUM — maintenant avec image de fond et overlay sombre -->
+        <section class="relative overflow-hidden bg-cover bg-center" style="background-image: url('/images/hopital.jpg');">
+            <!-- Overlay sombre pour garantir le contraste du texte -->
+            <div class="absolute inset-0 bg-black/55 backdrop-blur-sm"></div>
+
+            <!-- Formes géométriques animées (faible opacité pour ne pas distraire) -->
+            <div class="absolute inset-0 pointer-events-none">
+                <div class="absolute top-20 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl animate-blob"></div>
+                <div class="absolute top-40 right-20 w-96 h-96 bg-secondary-500/10 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
+                <div class="absolute bottom-20 left-1/3 w-80 h-80 bg-white/5 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
             </div>
 
             <!-- Contenu Hero -->
@@ -89,22 +87,22 @@ const animateStats = () => {
                 <div class="text-center">
                     <!-- Badge "Certifié" avec animation -->
                     <div
-                        class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full mb-8 animate-fade-in-down">
+                        class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white px-4 py-2 rounded-full mb-8 animate-fade-in-down drop-shadow-lg">
                         <Award class="w-5 h-5" />
                         <span class="text-sm font-medium">Hôpital Certifié ISO 9001</span>
                     </div>
 
                     <!-- Titre principal avec animation décalée -->
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 animate-fade-in-up">
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 animate-fade-in-up drop-shadow-2xl">
                         Hôpital Régional Annexe
-                        <span class="block text-secondary-400 mt-2">de Dschang</span>
+                        <span class="block text-secondary-300 font-semibold mt-2">de Dschang</span>
                     </h1>
 
                     <!-- Sous-titre avec animation -->
                     <p
-                        class="text-xl sm:text-2xl text-white/90 mb-10 max-w-3xl mx-auto animate-fade-in-up animation-delay-300">
+                        class="text-xl sm:text-2xl text-white/95 mb-10 max-w-3xl mx-auto animate-fade-in-up animation-delay-300 drop-shadow-lg">
                         Soins de qualité, équipe dédiée,<br class="hidden sm:block" />
-                        disponible <span class="font-bold text-secondary-400">24h/24</span>
+                        disponible <span class="font-bold text-secondary-300">24h/24</span>
                     </p>
 
                     <!-- CTAs avec hover effects -->
@@ -116,7 +114,7 @@ const animateStats = () => {
                         </Button>
 
                         <a href="tel:+237XXXXXXXXX"
-                            class="inline-flex items-center justify-center gap-3 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-300 border-2 border-white/30 hover:border-white/60 transform hover:scale-105">
+                            class="inline-flex items-center justify-center gap-3 bg-white text-primary-700 font-semibold py-4 px-8 rounded-lg transition-all duration-300 border-2 border-white/20 hover:scale-105 shadow-md">
                             <Phone class="w-5 h-5" />
                             <span>Appeler Maintenant</span>
                         </a>
