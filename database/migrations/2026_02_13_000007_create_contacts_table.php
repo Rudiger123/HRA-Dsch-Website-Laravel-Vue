@@ -1,0 +1,38 @@
+
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+	/**
+	 * Exécuter les migrations.
+	 * Table des messages de contact du formulaire
+	 */
+	public function up(): void
+	{
+		Schema::create('contacts', function (Blueprint $table) {
+			$table->id();
+			$table->string('nom', 150);
+			$table->string('email', 150);
+			$table->string('telephone', 20)->nullable();
+			$table->text('message');
+			$table->boolean('lu')->default(false); // Message lu par l'admin
+			$table->timestamps();
+
+			// Index pour améliorer les performances
+			$table->index('lu');
+			$table->index('created_at');
+		});
+	}
+
+	/**
+	 * Annuler les migrations.
+	 */
+	public function down(): void
+	{
+		Schema::dropIfExists('contacts');
+	}
+};

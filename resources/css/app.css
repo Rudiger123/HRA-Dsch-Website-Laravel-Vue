@@ -2,100 +2,93 @@
 
 /**
  * Thème personnalisé HRAD - Tailwind CSS v4
+ * Basé sur le logo officiel (Vert Cameroun + Jaune Or + Rouge)
  */
 @theme {
-	/* Couleurs de la charte graphique HRAD */
-	--color-primary-50: #E6F0FF;
-	--color-primary-100: #CCE1FF;
-	--color-primary-200: #99C3FF;
-	--color-primary-300: #66A5FF;
-	--color-primary-400: #3387FF;
-	--color-primary-500: #0056B3;
-	--color-primary-600: #004590;
-	--color-primary-700: #00346D;
-	--color-primary-800: #00234A;
-	--color-primary-900: #001227;
-	--color-primary-950: #000919;
+	/* COULEURS PRIMAIRE - VERT HRAD */
+	--color-primary-50: #E6F7EF;
+	--color-primary-100: #B3E6D1;
+	--color-primary-200: #80D5B3;
+	--color-primary-300: #4DC495;
+	--color-primary-400: #26B777;
+	--color-primary-500: #00A651; /* Vert officiel logo */
+	--color-primary-600: #008A42;
+	--color-primary-700: #006A33;
+	--color-primary-800: #004A24;
+	--color-primary-900: #002A15;
+	--color-primary-950: #001A0D;
 
-	--color-secondary-50: #E6F9F0;
-	--color-secondary-100: #CCF3E1;
-	--color-secondary-200: #99E7C3;
-	--color-secondary-300: #66DBA5;
-	--color-secondary-400: #33CF87;
-	--color-secondary-500: #00A651;
-	--color-secondary-600: #008541;
-	--color-secondary-700: #006431;
-	--color-secondary-800: #004321;
-	--color-secondary-900: #002211;
-	--color-secondary-950: #001108;
+	/* COULEURS SECONDAIRE - JAUNE/OR HRAD */
+	--color-secondary-50: #FFFBEB;
+	--color-secondary-100: #FFF4CC;
+	--color-secondary-200: #FFE999;
+	--color-secondary-300: #FFDE66;
+	--color-secondary-400: #FFD733;
+	--color-secondary-500: #FCD116; /* Jaune or officiel */
+	--color-secondary-600: #E6BD00;
+	--color-secondary-700: #B39500;
+	--color-secondary-800: #806C00;
+	--color-secondary-900: #4D4300;
+	--color-secondary-950: #332C00;
 
-	--color-danger-50: #FFF4E6;
-	--color-danger-100: #FFE9CC;
-	--color-danger-200: #FFD399;
-	--color-danger-300: #FFBD66;
-	--color-danger-400: #FFA733;
-	--color-danger-500: #FF8C00;
-	--color-danger-600: #CC7000;
-	--color-danger-700: #995400;
-	--color-danger-800: #663800;
-	--color-danger-900: #331C00;
-	--color-danger-950: #1A0E00;
+	/* COULEURS DANGER - ROUGE HRAD */
+	--color-danger-50: #FEEDEF;
+	--color-danger-100: #FDD6DA;
+	--color-danger-200: #FBADB5;
+	--color-danger-300: #F98490;
+	--color-danger-400: #F75B6B;
+	--color-danger-500: #E8112D; /* Rouge officiel */
+	--color-danger-600: #C70E26;
+	--color-danger-700: #9B0B1E;
+	--color-danger-800: #6F0816;
+	--color-danger-900: #43050E;
+	--color-danger-950: #2A0309;
 
-	/* Police personnalisée */
-	--font-sans: 'Figtree', ui-sans-serif, system-ui, sans-serif;
+	/* COULEURS NEUTRES */
+	--color-dark: #1A1A1A;
+
+	/* Police */
+	--font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
 /**
- * Styles de base personnalisés
+ * Styles de base
  */
-@layer base {
-	body {
-		@apply bg-gray-50 text-gray-900;
-	}
+body {
+	background-color: rgb(249 250 251);
+	color: var(--color-dark);
+}
 
-	h1 {
-		@apply text-4xl font-bold text-primary-700;
-	}
+h1 {
+	font-size: 2.25rem;
+	font-weight: 700;
+	color: var(--color-primary-700);
+}
 
-	h2 {
-		@apply text-3xl font-semibold text-primary-600;
-	}
+h2 {
+	font-size: 1.875rem;
+	font-weight: 600;
+	color: var(--color-primary-600);
+}
 
-	h3 {
-		@apply text-2xl font-semibold text-gray-800;
-	}
+h3 {
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: rgb(31 41 55);
 }
 
 /**
- * Composants réutilisables HRAD
+ * Utilitaires personnalisés uniquement
+ * (Pas de composants @apply en Tailwind v4)
  */
-@layer components {
-	.btn-primary {
-		@apply bg-primary-500 hover:bg-primary-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200;
-	}
-
-	.btn-secondary {
-		@apply bg-secondary-500 hover:bg-secondary-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200;
-	}
-
-	.btn-danger {
-		@apply bg-danger-500 hover:bg-danger-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200;
-	}
-
-	.card {
-		@apply bg-white rounded-lg shadow-md p-6;
-	}
-
-	.input-field {
-		@apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent;
-	}
+@utility text-balance {
+	text-wrap: balance;
 }
 
-/**
- * Utilitaires personnalisés
- */
-@layer utilities {
-	.text-balance {
-		text-wrap: balance;
-	}
+@utility gradient-hrad {
+	background: linear-gradient(135deg, #00A651 0%, #006A33 100%);
+}
+
+@utility gradient-hrad-accent {
+	background: linear-gradient(135deg, #00A651 0%, #FCD116 100%);
 }

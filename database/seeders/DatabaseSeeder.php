@@ -1,25 +1,55 @@
 <?php
-
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     /**
-     * Seed the application's database.
+     * Exécuter tous les seeders de la base de données HRAD
+     *
+     * Ordre important :
+     * 1. Services (table indépendante)
+     * 2. Médecins (table indépendante)
+     * 3. Horaires (dépend de Services)
+     * 4. Tarifs (dépend de Services)
+     *
+     * Les associations médecins-services sont créées dans MedecinSeeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->command->info('🏥 Démarrage du seeding de la base de données HRAD...');
+        $this->command->newLine();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Ordre d'exécution respectant les dépendances
+        $this->call([
+            ServiceSeeder::class,
+            MedecinSeeder::class,
+            HoraireSeeder::class,
+            TarifSeeder::class,
         ]);
+
+        $this->command->newLine();
+        $this->command->info('✅ Base de données HRAD complètement initialisée !');
+        $this->command->info('📊 Statistiques :');
+
+        // Afficher les statistiques
+        $serviceCount = \App\Models\Service::count();
+        $medecinCount = \App\Models\Medecin::count();
+        $horaireCount = \App\Models\Horaire::count();
+        $tarifCount = \App\Models\Tarif::count();
+
+        $this->command->table(
+            ['Table', 'Nombre d\'enregistrements'],
+            [
+                ['Services', $serviceCount],
+                ['Médecins', $medecinCount],
+                ['Horaires', $horaireCount],
+                ['Tarifs', $tarifCount],
+            ]
+        );
+
+        $this->command->newLine();
+        $this->command->info('🚀 Vous pouvez maintenant démarrer le développement !');
     }
 }
