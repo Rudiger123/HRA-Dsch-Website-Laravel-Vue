@@ -25,7 +25,9 @@ const navigation = [
 			{ name: 'Urgences 24/7', href: '/services/urgences' },
 		]
 	},
+	{ name: 'Tarifs', href: '/tarifs' },
 	{ name: 'Équipe Médicale', href: '/equipe' },
+	{ name: 'FAQ', href: '/faq' },
 	{ name: 'Rendez-vous', href: '/rendez-vous' },
 	{ name: 'Contact', href: '/contact' }
 ]

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Contact;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class ContactController extends Controller
 {
@@ -14,26 +14,18 @@ class ContactController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'nom' => 'required|string|max:150',
+        $validated = $request->validate([
+            'nom' => 'required|string|max:150|min:3',
             'email' => 'required|email|max:150',
             'telephone' => 'nullable|string|max:20',
-            'message' => 'required|string|max:1000',
+            'message' => 'required|string|max:1000|min:10',
+        ], [
+            'nom.min' => 'Le nom doit avoir au moins 3 caractères',
+            'message.min' => 'Le message doit avoir au moins 10 caractères',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
-        }
+        $contact = Contact::create($validated);
 
-        $contact = Contact::create($validator->validated());
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Message envoyé avec succès. Nous vous répondrons dans les plus brefs délais.',
-            'data' => $contact
-        ], 201);
+        return redirect()->back()->with('success', 'Message envoyé avec succès. Nous vous répondrons dans les 24 heures.');
     }
 }
