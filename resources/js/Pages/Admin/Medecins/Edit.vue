@@ -23,9 +23,8 @@ const form = useForm({
 })
 
 const submit = () => {
-  form.post(route('admin.medecins.update', props.medecin.id), {
+  form.put(route('admin.medecins.update', props.medecin.id), {
     forceFormData: true,
-    _method: 'PUT',
   })
 }
 

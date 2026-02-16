@@ -16,7 +16,6 @@ return Application::configure(basePath: dirname(__DIR__))
         // Ajouter les middlewares au groupe 'web'
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
-            HandleZiggy::class,
         ]);
 
         // Enregistrer les aliases de middleware

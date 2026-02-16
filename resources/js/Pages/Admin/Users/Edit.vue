@@ -21,9 +21,7 @@ const form = useForm({
 })
 
 const submit = () => {
-  form.post(route('admin.users.update', props.user.id), {
-    _method: 'PUT',
-  })
+  form.put(route('admin.users.update', props.user.id))
 }
 </script>
 

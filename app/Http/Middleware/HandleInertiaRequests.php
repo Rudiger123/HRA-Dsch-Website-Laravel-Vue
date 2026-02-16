@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use App\Models\Contact;
+use Tighten\Ziggy\Ziggy as TightenZiggy;
 use Tightenco\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
@@ -54,7 +55,7 @@ class HandleInertiaRequests extends Middleware
 				: 0,
 			'unread_notifications_count' => 0, // TODO: Implémenter système notifications
 			'ziggy' => fn () => [
-				'routes' => (new Ziggy)->toArray(),
+				'routes' => (new TightenZiggy())->toArray(),
 				'url' => url('/'),
 			],
 		];
