@@ -282,7 +282,7 @@ const userRole = computed(() => {
               <span>Dashboard</span>
             </Link>
             <ChevronDown :size="14" class="text-slate-400 -rotate-90" />
-            <span class="text-slate-900 font-semibold bg-slate-100 px-3 py-1 rounded-full">{{ page.props.title || 'Page' }}</span>
+            <span class="text-slate-900 font-semibold bg-slate-100 px-3 py-1 rounded-full">{{ page.props.title || 'Admin' }}</span>
           </nav>
         </div>
 
