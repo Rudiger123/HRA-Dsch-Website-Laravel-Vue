@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use App\Models\Contact;
+use Tightenco\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -29,23 +31,32 @@ class HandleInertiaRequests extends Middleware
 		return [
 			...parent::share($request),
 
-			// Informations de l'utilisateur authentifié
 			'auth' => [
-				'user' => $request->user(),
+				'user' => $request->user() ? [
+					'id' => $request->user()->id,
+					'name' => $request->user()->name,
+					'email' => $request->user()->email,
+					'phone' => $request->user()->phone,
+					'photo' => $request->user()->photo,
+					'photo_url' => $request->user()->photo_url,
+					'is_active' => $request->user()->is_active,
+					'role' => $request->user()->getRoleNames()->first(),
+					'permissions' => $request->user()->getAllPermissions()->pluck('name'),
+				] : null,
 			],
-
-			// Messages flash de session
 			'flash' => [
 				'success' => fn () => $request->session()->get('success'),
 				'error' => fn () => $request->session()->get('error'),
-				'warning' => fn () => $request->session()->get('warning'),
 				'info' => fn () => $request->session()->get('info'),
 			],
-
-			// Erreurs de validation
-			'errors' => fn () => $request->session()->get('errors')
-				? $request->session()->get('errors')->getBag('default')->getMessages()
-				: (object) [],
+			'unread_messages_count' => fn () => $request->user() && $request->user()->can('view_contacts')
+				? Contact::where('lu', false)->count()
+				: 0,
+			'unread_notifications_count' => 0, // TODO: Implémenter système notifications
+			'ziggy' => fn () => [
+				'routes' => (new Ziggy)->toArray(),
+				'url' => url('/'),
+			],
 		];
 	}
 }

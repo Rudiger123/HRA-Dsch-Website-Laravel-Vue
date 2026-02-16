@@ -179,6 +179,7 @@ const hasResults = computed(() => filteredServices.value.length > 0)
 </template>
 
 <style scoped>
+
 @keyframes scale-in {
     from {
         opacity: 0;

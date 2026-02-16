@@ -3,13 +3,17 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title inertia>{{ config('app.name', 'HRAD Dschang') }}</title>
+
+    <!-- SEO Meta Tags -->
+    {!! SEO::generate() !!}
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link rel="shortcut icon" href="/images/logo-hrad.png" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/images/logo-hrad.png">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
+    @routes
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @inertiaHead

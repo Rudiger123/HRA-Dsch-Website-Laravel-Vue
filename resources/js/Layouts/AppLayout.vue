@@ -4,19 +4,23 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import {
 	Menu, X, Phone, Clock, MapPin,
 	Facebook, Twitter, Instagram, Mail,
-	ChevronDown
+	ChevronDown, Stethoscope, Users, FileText,
+	AlertCircle, HelpCircle, Calendar
 } from 'lucide-vue-next'
 
 const mobileMenuOpen = ref(false)
 const scrolled = ref(false)
 const servicesDropdownOpen = ref(false)
+const mobileServicesOpen = ref(false)
 
-const navigation = [
-	{ name: 'Accueil', href: '/' },
+// Navigation principale - groupée par importance
+const mainNavigation = [
+	{ name: 'Accueil', href: '/', icon: null },
 	{
 		name: 'Services',
 		href: '/services',
 		dropdown: true,
+		icon: Stethoscope,
 		items: [
 			{ name: 'Tous les services', href: '/services' },
 			{ name: 'Pédiatrie', href: '/services/pediatrie' },
@@ -25,11 +29,16 @@ const navigation = [
 			{ name: 'Urgences 24/7', href: '/services/urgences' },
 		]
 	},
+	{ name: 'Équipe', href: '/equipe', icon: Users },
+	{ name: 'À Propos', href: '/a-propos', icon: FileText },
+	{ name: 'Actualités', href: '/actualites', icon: null },
+]
+
+// Navigation secondaire - dans un menu
+const secondaryNavigation = [
 	{ name: 'Tarifs', href: '/tarifs' },
-	{ name: 'Équipe Médicale', href: '/equipe' },
 	{ name: 'FAQ', href: '/faq' },
-	{ name: 'Rendez-vous', href: '/rendez-vous' },
-	{ name: 'Contact', href: '/contact' }
+	{ name: 'Contact', href: '/contact' },
 ]
 
 const handleScroll = () => {
@@ -47,50 +56,90 @@ onUnmounted(() => {
 
 <template>
 	<div class="min-h-screen flex flex-col bg-gray-50">
-		<!-- Header -->
-		<header :class="['sticky top-0 z-40 bg-white transition-all', scrolled ? 'shadow-lg' : 'shadow']">
+		<!-- Top Bar Info - Desktop Only -->
+		<div class="hidden md:block bg-gradient-to-r from-primary-600 to-primary-700 text-white text-sm py-3 border-b border-primary-800">
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div class="flex items-center justify-between h-20">
+				<div class="flex justify-between items-center flex-wrap gap-4">
+					<!-- Left: Contact Info -->
+					<div class="flex items-center gap-6">
+						<a href="tel:+237XXXXXXXXX" class="flex items-center gap-2 hover:text-secondary-200 transition-colors group">
+							<Phone class="w-4 h-4 group-hover:animate-pulse" />
+							<span>+237 XXX XXX XXX</span>
+						</a>
+						<span class="text-primary-300">|</span>
+						<a href="mailto:contact@hrad-dschang.cm" class="flex items-center gap-2 hover:text-secondary-200 transition-colors">
+							<Mail class="w-4 h-4" />
+							<span>contact@hrad-dschang.cm</span>
+						</a>
+					</div>
+
+					<!-- Right: Horaires + Urgences -->
+					<div class="flex items-center gap-4">
+						<div class="flex items-center gap-1 text-primary-100">
+							<Clock class="w-4 h-4" />
+							<span>Lun-Ven 8h-17h | Sam 8h-12h</span>
+						</div>
+						<span class="text-primary-300">|</span>
+						<a
+							href="tel:+237XXXXXXXXX"
+							class="flex items-center gap-1 bg-danger-500 hover:bg-danger-600 px-3 py-1 rounded font-bold transition-all transform hover:scale-105"
+						>
+							<AlertCircle class="w-4 h-4" />
+							Urgences 24/7
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Main Header -->
+		<header :class="['sticky top-0 z-40 bg-white transition-all', scrolled ? 'shadow-lg' : 'shadow']" :style="{ top: 'var(--header-offset, 0)' }">
+			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="flex items-center justify-between h-16 md:h-20">
 					<!-- Logo -->
-					<Link href="/" class="flex items-center gap-3 group">
-						<img src="/images/logo-hrad.png" alt="HRAD Logo" class="h-14 w-auto transition-transform group-hover:scale-105" />
+					<Link href="/" class="flex items-center gap-2 group flex-shrink-0">
+						<img src="/images/logo-hrad.png" alt="HRAD Logo" class="h-12 md:h-14 w-auto transition-transform group-hover:scale-110" />
 						<div class="hidden sm:block">
-							<div class="text-xl font-bold text-primary-600 leading-tight">HRAD</div>
-							<div class="text-xs text-gray-600">Hôpital Régional Annexe</div>
+							<div class="text-lg md:text-xl font-bold text-primary-600 leading-tight">HRAD</div>
+							<div class="text-xs text-gray-600">Hôpital Régional</div>
 						</div>
 					</Link>
 
-					<!-- Navigation Desktop -->
-					<nav class="hidden lg:flex items-center gap-1">
-						<template v-for="item in navigation" :key="item.name">
+					<!-- Navigation Desktop - Spacée -->
+					<nav class="hidden lg:flex items-center gap-2 flex-1 mx-8">
+						<template v-for="item in mainNavigation" :key="item.name">
 							<!-- Menu avec dropdown -->
 							<div
 								v-if="item.dropdown"
-								class="relative"
+								class="relative group"
 								@mouseenter="servicesDropdownOpen = true"
 								@mouseleave="servicesDropdownOpen = false"
 							>
 								<button
-									class="flex items-center gap-1 text-gray-700 hover:text-primary-600 font-medium px-4 py-2 rounded-md transition-colors"
+									class="flex items-center gap-1 text-gray-700 hover:text-primary-600 font-medium px-4 py-3 rounded-md transition-colors whitespace-nowrap"
 									:class="{ 'text-primary-600 bg-primary-50': $page.url.startsWith('/services') }"
 								>
+									<component v-if="item.icon" :is="item.icon" class="w-4 h-4" />
 									{{ item.name }}
-									<ChevronDown class="w-4 h-4" :class="{ 'rotate-180': servicesDropdownOpen }" />
+									<ChevronDown class="w-4 h-4 transition-transform group-hover:rotate-180" />
 								</button>
 
-								<!-- Dropdown menu -->
+								<!-- Mega Dropdown - Deux colonnes -->
 								<div
 									v-show="servicesDropdownOpen"
-									class="absolute top-full left-0 mt-1 w-64 bg-white rounded-lg shadow-xl border border-gray-100 py-2 animate-fade-in-down"
+									class="absolute top-full left-0 mt-1 w-80 bg-white rounded-lg shadow-2xl border border-gray-100 p-4 animate-fade-in-down"
 								>
-									<Link
-										v-for="subItem in item.items"
-										:key="subItem.href"
-										:href="subItem.href"
-										class="block px-4 py-3 text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-colors"
-									>
-										{{ subItem.name }}
-									</Link>
+									<div class="space-y-2">
+										<Link
+											v-for="subItem in item.items"
+											:key="subItem.href"
+											:href="subItem.href"
+											class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md transition-all hover:translate-x-1"
+										>
+											<div class="w-2 h-2 bg-primary-500 rounded-full group-hover:w-3"></div>
+											<span>{{ subItem.name }}</span>
+										</Link>
+									</div>
 								</div>
 							</div>
 
@@ -98,29 +147,79 @@ onUnmounted(() => {
 							<Link
 								v-else
 								:href="item.href"
-								class="text-gray-700 hover:text-primary-600 font-medium px-4 py-2 rounded-md transition-colors"
+								class="text-gray-700 hover:text-primary-600 font-medium px-4 py-3 rounded-md transition-colors whitespace-nowrap flex items-center gap-2"
 								:class="{ 'text-primary-600 bg-primary-50': $page.url === item.href }"
 							>
+								<component v-if="item.icon" :is="item.icon" class="w-4 h-4 hidden lg:inline" />
 								{{ item.name }}
 							</Link>
 						</template>
 					</nav>
 
-					<!-- CTA Urgences + Mobile Menu Button -->
-					<div class="flex items-center gap-3">
-						<!-- Bouton Urgences Desktop -->
+					<!-- Right Side - Desktop -->
+					<div class="hidden lg:flex items-center gap-3">
+						<!-- Lien Rendez-vous - CTA Principal -->
+						<Link
+							href="/rendez-vous"
+							class="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-bold px-5 py-2.5 rounded-lg transition-all transform hover:scale-105 shadow-sm"
+						>
+							<Calendar class="w-4 h-4" />
+							Rendez-vous
+						</Link>
+
+						<!-- Menu Secondaire Dropdown -->
+						<div class="relative group">
+							<button
+								class="text-gray-700 hover:text-primary-600 font-medium px-3 py-2 rounded-md transition-colors"
+							>
+								<Menu class="w-5 h-5" />
+							</button>
+							<div class="absolute top-full right-0 mt-1 w-48 bg-white rounded-lg shadow-xl border border-gray-100 py-2 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all">
+								<Link
+									v-for="item in secondaryNavigation"
+									:key="item.href"
+									:href="item.href"
+									class="block px-4 py-2.5 text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-colors text-sm"
+								>
+									{{ item.name }}
+								</Link>
+								<div class="border-t border-gray-100 my-2"></div>
+								<Link
+									href="/mentions-legales"
+									class="block px-4 py-2.5 text-gray-600 hover:text-primary-600 text-sm transition-colors"
+								>
+									Mentions Légales
+								</Link>
+								<Link
+									href="/confidentialite"
+									class="block px-4 py-2.5 text-gray-600 hover:text-primary-600 text-sm transition-colors"
+								>
+									Politique Confidentialité
+								</Link>
+								<Link
+									href="/cgu"
+									class="block px-4 py-2.5 text-gray-600 hover:text-primary-600 text-sm transition-colors"
+								>
+									CGU
+								</Link>
+							</div>
+						</div>
+					</div>
+
+					<!-- Mobile: Menu Button + Urgences -->
+					<div class="lg:hidden flex items-center gap-2">
+						<!-- Mini CTA Urgences Mobile -->
 						<a
 							href="tel:+237XXXXXXXXX"
-							class="hidden sm:flex items-center gap-2 bg-danger-500 hover:bg-danger-600 text-white font-bold px-4 py-2 rounded-lg transition-all transform hover:scale-105 animate-pulse"
+							class="md:hidden flex items-center gap-1 bg-danger-500 text-white font-bold px-3 py-2 rounded-lg text-sm transition-all"
 						>
 							<Phone class="w-4 h-4" />
-							<span class="hidden md:inline">Urgences</span>
 						</a>
 
-						<!-- Mobile Menu Button -->
+						<!-- Menu Button -->
 						<button
 							@click="mobileMenuOpen = !mobileMenuOpen"
-							class="lg:hidden p-2 text-gray-600 hover:text-primary-600 transition-colors"
+							class="p-2 text-gray-600 hover:text-primary-600 transition-colors"
 						>
 							<Menu v-if="!mobileMenuOpen" class="w-6 h-6" />
 							<X v-else class="w-6 h-6" />
@@ -128,43 +227,102 @@ onUnmounted(() => {
 					</div>
 				</div>
 
-				<!-- Mobile Menu -->
+				<!-- Mobile Menu - Hiérarchisé -->
 				<div
 					v-if="mobileMenuOpen"
-					class="lg:hidden py-4 border-t border-gray-100 animate-fade-in-down"
+					class="lg:hidden py-4 border-t border-gray-100 max-h-[calc(100vh-80px)] overflow-y-auto animate-fade-in-down"
 				>
-					<!-- Liens principaux mobile -->
-					<Link
-						v-for="item in navigation.filter(i => !i.dropdown)"
-						:key="item.name"
-						:href="item.href"
-						class="block py-3 px-4 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md transition-colors"
-						@click="mobileMenuOpen = false"
-					>
-						{{ item.name }}
-					</Link>
+					<!-- Navigation principale -->
+					<div class="space-y-1">
+						<template v-for="item in mainNavigation" :key="item.name">
+							<!-- Services avec submenu -->
+							<div v-if="item.dropdown">
+								<button
+									@click="mobileServicesOpen = !mobileServicesOpen"
+									class="w-full flex items-center justify-between py-3 px-4 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md font-medium transition-colors"
+								>
+									<span class="flex items-center gap-2">
+										<Stethoscope class="w-4 h-4" />
+										{{ item.name }}
+									</span>
+									<ChevronDown :class="['w-4 h-4 transition-transform', mobileServicesOpen && 'rotate-180']" />
+								</button>
+								<div v-if="mobileServicesOpen" class="bg-primary-50 py-2">
+									<Link
+										v-for="subItem in item.items"
+										:key="subItem.href"
+										:href="subItem.href"
+										class="block py-2.5 px-8 text-gray-700 hover:text-primary-600 transition-colors border-l-2 border-transparent hover:border-primary-600"
+										@click="mobileMenuOpen = false"
+									>
+										{{ subItem.name }}
+									</Link>
+								</div>
+							</div>
 
-					<!-- Services submenu mobile -->
-					<div class="py-2">
-						<div class="text-sm font-semibold text-gray-500 px-4 py-2">Services</div>
+							<!-- Liens simples -->
+							<Link
+								v-else
+								:href="item.href"
+								class="flex items-center gap-2 py-3 px-4 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md font-medium transition-colors"
+								@click="mobileMenuOpen = false"
+							>
+								<component v-if="item.icon" :is="item.icon" class="w-4 h-4" />
+								{{ item.name }}
+							</Link>
+						</template>
+					</div>
+
+					<!-- Divider -->
+					<div class="my-4 border-t border-gray-200"></div>
+
+					<!-- Navigation secondaire -->
+					<div class="space-y-1">
 						<Link
-							v-for="subItem in navigation.find(i => i.dropdown)?.items"
-							:key="subItem.href"
-							:href="subItem.href"
-							class="block py-2 px-8 text-gray-600 hover:bg-primary-50 hover:text-primary-600 transition-colors"
+							v-for="item in secondaryNavigation"
+							:key="item.href"
+							:href="item.href"
+							class="block py-2.5 px-4 text-gray-600 hover:bg-primary-50 hover:text-primary-600 rounded-md transition-colors text-sm"
 							@click="mobileMenuOpen = false"
 						>
-							{{ subItem.name }}
+							{{ item.name }}
 						</Link>
 					</div>
 
-					<!-- CTA Mobile -->
+					<!-- Divider -->
+					<div class="my-4 border-t border-gray-200"></div>
+
+					<!-- CTA Principal -->
+					<Link
+						href="/rendez-vous"
+						class="flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 rounded-lg m-4 transition-colors"
+						@click="mobileMenuOpen = false"
+					>
+						<Calendar class="w-4 h-4" />
+						Prendre Rendez-vous
+					</Link>
+
+					<!-- Urgences -->
 					<a
 						href="tel:+237XXXXXXXXX"
-						class="block mt-4 mx-4 bg-danger-500 text-white text-center font-bold py-3 rounded-lg hover:bg-danger-600 transition-colors"
+						class="flex items-center justify-center gap-2 bg-danger-500 hover:bg-danger-600 text-white font-bold py-3 rounded-lg m-4 transition-colors animate-pulse"
 					>
-						🚨 Urgences 24/7
+						<AlertCircle class="w-4 h-4" />
+						Urgences 24/7
 					</a>
+
+					<!-- Pages légales -->
+					<div class="py-4 border-t border-gray-200 space-y-1 text-xs">
+						<Link href="/mentions-legales" class="block px-4 py-2 text-gray-600 hover:text-primary-600" @click="mobileMenuOpen = false">
+							Mentions Légales
+						</Link>
+						<Link href="/confidentialite" class="block px-4 py-2 text-gray-600 hover:text-primary-600" @click="mobileMenuOpen = false">
+							Politique Confidentialité
+						</Link>
+						<Link href="/cgu" class="block px-4 py-2 text-gray-600 hover:text-primary-600" @click="mobileMenuOpen = false">
+							CGU
+						</Link>
+					</div>
 				</div>
 			</div>
 		</header>
@@ -225,6 +383,12 @@ onUnmounted(() => {
 								<Link href="/services" class="hover:text-primary-400 transition-colors flex items-center gap-2 group">
 									<span class="w-1 h-1 bg-primary-500 rounded-full group-hover:w-2 transition-all"></span>
 									Nos Services
+								</Link>
+							</li>
+							<li>
+								<Link href="/a-propos" class="hover:text-primary-400 transition-colors flex items-center gap-2 group">
+									<span class="w-1 h-1 bg-primary-500 rounded-full group-hover:w-2 transition-all"></span>
+									À Propos
 								</Link>
 							</li>
 							<li>
@@ -341,11 +505,11 @@ onUnmounted(() => {
 							<Link href="/mentions-legales" class="hover:text-primary-400 transition-colors">
 								Mentions Légales
 							</Link>
-							<Link href="/politique-confidentialite" class="hover:text-primary-400 transition-colors">
+							<Link href="/confidentialite" class="hover:text-primary-400 transition-colors">
 								Confidentialité
 							</Link>
-							<Link href="/cgv" class="hover:text-primary-400 transition-colors">
-								CGV
+							<Link href="/cgu" class="hover:text-primary-400 transition-colors">
+								CGU
 							</Link>
 						</div>
 					</div>

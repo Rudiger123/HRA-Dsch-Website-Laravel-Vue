@@ -23,10 +23,13 @@ class DatabaseSeeder extends Seeder
 
         // Ordre d'exécution respectant les dépendances
         $this->call([
+            RolePermissionSeeder::class,
+            AdminTestSeeder::class,
             ServiceSeeder::class,
             MedecinSeeder::class,
             HoraireSeeder::class,
             TarifSeeder::class,
+            ActualiteSeeder::class,
         ]);
 
         $this->command->newLine();
@@ -38,6 +41,7 @@ class DatabaseSeeder extends Seeder
         $medecinCount = \App\Models\Medecin::count();
         $horaireCount = \App\Models\Horaire::count();
         $tarifCount = \App\Models\Tarif::count();
+        $actualiteCount = \App\Models\Actualite::count();
 
         $this->command->table(
             ['Table', 'Nombre d\'enregistrements'],
@@ -46,6 +50,7 @@ class DatabaseSeeder extends Seeder
                 ['Médecins', $medecinCount],
                 ['Horaires', $horaireCount],
                 ['Tarifs', $tarifCount],
+                ['Actualités', $actualiteCount],
             ]
         );
 

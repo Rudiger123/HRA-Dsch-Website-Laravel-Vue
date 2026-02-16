@@ -6,7 +6,8 @@ import Button from '@/Components/Button.vue'
 import ServiceCard from '@/Components/ServiceCard.vue'
 import {
     Phone, Calendar, Heart, Users,
-    Clock, MapPin, Award, Zap
+    Clock, MapPin, Award, Zap, CheckCircle,
+    TrendingUp, Stethoscope, Shield, Lightbulb, Target
 } from 'lucide-vue-next'
 
 // Props
@@ -149,43 +150,55 @@ const animateStats = () => {
             </div>
         </section>
 
-        <!-- Bande info rapide avec animation -->
-        <section class="bg-white -mt-1 py-8 shadow-lg relative z-10">
+        <!-- Bande de valeurs clés - Remplace les infos de contact (déjà en haut) -->
+        <section class="bg-gradient-to-r from-gray-50 via-white to-gray-50 -mt-1 py-12 shadow-lg relative z-10 border-b-2 border-gray-100">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-                    <!-- Horaires -->
-                    <div class="flex items-center justify-center gap-3 animate-slide-in-left">
-                        <div class="bg-primary-100 p-3 rounded-full">
-                            <Clock class="w-6 h-6 text-primary-600" />
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Valeur 1: Réactivité -->
+                    <div class="flex items-center gap-4 group cursor-pointer">
+                        <div class="flex-shrink-0">
+                            <div class="bg-gradient-to-br from-primary-600 to-primary-700 rounded-full p-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                                <Zap class="w-7 h-7 text-white" />
+                            </div>
                         </div>
-                        <div class="text-left">
-                            <div class="text-sm text-gray-600">Horaires</div>
-                            <div class="font-semibold text-gray-900">Lun-Ven 8h-17h</div>
-                        </div>
-                    </div>
-
-                    <!-- Urgences -->
-                    <div class="flex items-center justify-center gap-3 animate-slide-in-up animation-delay-200">
-                        <div class="bg-danger-100 p-3 rounded-full animate-pulse">
-                            <Phone class="w-6 h-6 text-danger-600" />
-                        </div>
-                        <div class="text-left">
-                            <div class="text-sm text-gray-600">Urgences 24/7</div>
-                            <a href="tel:+237XXXXXXXXX"
-                                class="font-bold text-danger-600 hover:text-danger-700 text-lg transition-colors">
-                                +237 XXX XXX XXX
-                            </a>
+                        <div class="flex-1">
+                            <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Réactivité Garantie</div>
+                            <div class="text-2xl font-bold text-gray-900 group-hover:text-primary-600 transition-colors">
+                                Réponse en <span class="text-primary-600">2h</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-1">Pour toutes vos demandes</p>
                         </div>
                     </div>
 
-                    <!-- Localisation -->
-                    <div class="flex items-center justify-center gap-3 animate-slide-in-right animation-delay-400">
-                        <div class="bg-secondary-100 p-3 rounded-full">
-                            <MapPin class="w-6 h-6 text-secondary-600" />
+                    <!-- Valeur 2: Excellence & Certifications -->
+                    <div class="flex items-center gap-4 group cursor-pointer">
+                        <div class="flex-shrink-0">
+                            <div class="bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-full p-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                                <Award class="w-7 h-7 text-white" />
+                            </div>
                         </div>
-                        <div class="text-left">
-                            <div class="text-sm text-gray-600">Localisation</div>
-                            <div class="font-semibold text-gray-900">Dschang, Cameroun</div>
+                        <div class="flex-1">
+                            <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Excellence Médicale</div>
+                            <div class="text-2xl font-bold text-gray-900 group-hover:text-secondary-600 transition-colors">
+                                <span class="text-secondary-600">50+</span> Professionnels
+                            </div>
+                            <p class="text-sm text-gray-600 mt-1">Équipe certifiée et expérimentée</p>
+                        </div>
+                    </div>
+
+                    <!-- Valeur 3: Services Complets -->
+                    <div class="flex items-center gap-4 group cursor-pointer">
+                        <div class="flex-shrink-0">
+                            <div class="bg-gradient-to-br from-danger-500 to-danger-600 rounded-full p-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                                <Stethoscope class="w-7 h-7 text-white" />
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Services Complets</div>
+                            <div class="text-2xl font-bold text-gray-900 group-hover:text-danger-600 transition-colors">
+                                <span class="text-danger-600">15+</span> Spécialités
+                            </div>
+                            <p class="text-sm text-gray-600 mt-1">Pour tous vos besoins de santé</p>
                         </div>
                     </div>
                 </div>

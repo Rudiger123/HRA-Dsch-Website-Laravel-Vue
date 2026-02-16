@@ -1,2 +1,14 @@
 User-agent: *
-Disallow:
+Allow: /
+
+# Bloquer pages admin (quand vous les créerez)
+Disallow: /admin/
+Disallow: /api/
+
+# Bloquer pages légales (pas d'intérêt SEO)
+Disallow: /mentions-legales
+Disallow: /confidentialite
+Disallow: /cgu
+
+# Sitemap
+Sitemap: https://www.hradschang.cm/sitemap.xml
