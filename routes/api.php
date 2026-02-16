@@ -5,6 +5,10 @@ use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\RdvRequestController;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\ActualiteController;
+use App\Http\Controllers\Api\SearchController;
+
+// Recherche globale (authentifiée)
+Route::middleware('auth')->post('/search/global', [SearchController::class, 'global'])->name('search.global');
 
 // Services (lecture seule)
 Route::get('/services', [ServiceController::class, 'index']);

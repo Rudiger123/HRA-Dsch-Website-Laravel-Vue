@@ -4,7 +4,7 @@ import { Head, Link, router } from '@inertiajs/vue3'
 import { route } from 'ziggy-js'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import SearchBar from '@/Components/Admin/SearchBar.vue'
-import Pagination from '@/Components/Admin/Pagination.vue'
+import AdvancedPagination from '@/Components/Admin/AdvancedPagination.vue'
 import {
   Calendar, Clock, CheckCircle, XCircle, AlertCircle,
   Phone, User, Hospital, Eye
@@ -20,6 +20,7 @@ const props = defineProps({
 const search = ref(props.filters?.search || '')
 const selectedStatus = ref(props.filters?.statut || '')
 const selectedService = ref(props.filters?.service_id || '')
+const perPage = ref(props.filters?.per_page || 7)
 
 // Recherche
 let searchTimeout = null
@@ -27,7 +28,7 @@ const handleSearch = (value) => {
   clearTimeout(searchTimeout)
   searchTimeout = setTimeout(() => {
     router.get(route('admin.rdv-requests.index'),
-      { search: value, statut: selectedStatus.value, service_id: selectedService.value },
+      { search: value, statut: selectedStatus.value, service_id: selectedService.value, per_page: perPage.value },
       { preserveState: true, replace: true }
     )
   }, 500)
@@ -39,6 +40,18 @@ const applyFilters = () => {
     search: search.value,
     statut: selectedStatus.value,
     service_id: selectedService.value,
+    per_page: perPage.value,
+  }, { preserveState: true })
+}
+
+// Changement du nombre d'éléments par page
+const handlePerPageChange = (newPerPage) => {
+  perPage.value = newPerPage
+  router.get(route('admin.rdv-requests.index'), {
+    search: search.value,
+    statut: selectedStatus.value,
+    service_id: selectedService.value,
+    per_page: newPerPage,
   }, { preserveState: true })
 }
 
@@ -239,7 +252,7 @@ const getStatusLabel = (statut) => {
 
     <!-- Pagination -->
     <div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <Pagination :links="rdvRequests.links" :meta="rdvRequests.meta" />
+      <AdvancedPagination :links="rdvRequests.links" :meta="rdvRequests.meta" :current-per-page="perPage" @per-page-change="handlePerPageChange" />
     </div>
   </AdminLayout>
 </template>

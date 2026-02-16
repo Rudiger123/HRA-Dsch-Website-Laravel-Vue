@@ -4,7 +4,7 @@ import { Head, Link, router } from '@inertiajs/vue3'
 import { route } from 'ziggy-js'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import SearchBar from '@/Components/Admin/SearchBar.vue'
-import Pagination from '@/Components/Admin/Pagination.vue'
+import AdvancedPagination from '@/Components/Admin/AdvancedPagination.vue'
 import {
   Activity, User, Calendar, Search, Filter,
   Eye
@@ -20,6 +20,7 @@ const search = ref(props.filters?.search || '')
 const selectedUser = ref(props.filters?.causer_id || '')
 const dateDebut = ref(props.filters?.date_debut || '')
 const dateFin = ref(props.filters?.date_fin || '')
+const perPage = ref(props.filters?.per_page || 7)
 
 // Recherche
 let searchTimeout = null
@@ -30,6 +31,20 @@ const handleSearch = (value) => {
   }, 500)
 }
 
+/**
+ * Gérer le changement du nombre d'éléments par page
+ */
+const handlePerPageChange = (newPerPage) => {
+  perPage.value = newPerPage
+  router.get(route('admin.activity-log.index'), {
+    search: search.value,
+    causer_id: selectedUser.value,
+    date_debut: dateDebut.value,
+    date_fin: dateFin.value,
+    per_page: newPerPage,
+  }, { preserveState: true })
+}
+
 // Appliquer filtres
 const applyFilters = () => {
   router.get(route('admin.activity-log.index'), {
@@ -37,6 +52,7 @@ const applyFilters = () => {
     causer_id: selectedUser.value,
     date_debut: dateDebut.value,
     date_fin: dateFin.value,
+    per_page: perPage.value,
   }, { preserveState: true })
 }
 
@@ -192,7 +208,12 @@ const getActionColor = (description) => {
 
     <!-- Pagination -->
     <div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <Pagination :links="activities.links" :meta="activities.meta" />
+      <AdvancedPagination
+        :links="activities.links"
+        :meta="activities.meta"
+        :current-per-page="perPage"
+        @per-page-change="handlePerPageChange"
+      />
     </div>
   </AdminLayout>
 </template>

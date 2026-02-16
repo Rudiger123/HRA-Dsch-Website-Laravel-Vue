@@ -7,6 +7,8 @@ import {
   User, LogOut, Menu, X, Bell, Search, ChevronDown,
   Settings, Activity, Shield, Sparkles
 } from 'lucide-vue-next'
+import GlobalSearch from '@/Components/Admin/GlobalSearch.vue'
+import LogoutConfirmModal from '@/Components/Admin/LogoutConfirmModal.vue'
 
 const page = usePage()
 const user = computed(() => page.props.auth?.user)
@@ -22,15 +24,18 @@ const route = (routeName, params = {}) => {
 const sidebarOpen = ref(true)
 const userMenuOpen = ref(false)
 const notificationsOpen = ref(false)
+const showLogoutModal = ref(false)
 
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value
 }
 
 const logout = () => {
-  if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
-    router.post(route('logout'))
-  }
+  showLogoutModal.value = true
+}
+
+const closeLogoutModal = () => {
+  showLogoutModal.value = false
 }
 
 // Menu de navigation selon permissions
@@ -283,14 +288,8 @@ const userRole = computed(() => {
 
         <!-- Right: Search, Notifications, User menu -->
         <div class="flex items-center gap-2">
-          <!-- Search -->
-          <button class="hidden md:flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-600 transition-all duration-200 group">
-            <Search :size="18" class="text-slate-400 group-hover:text-slate-600" />
-            <span class="text-sm font-medium">Rechercher...</span>
-            <kbd class="hidden lg:inline-flex items-center px-2 py-0.5 bg-white rounded text-xs font-mono text-slate-400 border border-slate-200 shadow-sm">
-              ⌘K
-            </kbd>
-          </button>
+          <!-- Global Search -->
+          <GlobalSearch />
 
           <!-- Notifications -->
           <div class="relative">
@@ -482,5 +481,11 @@ const userRole = computed(() => {
         </div>
       </footer>
     </div>
+
+    <!-- Logout Confirmation Modal -->
+    <LogoutConfirmModal
+      :is-open="showLogoutModal"
+      @close="closeLogoutModal"
+    />
   </div>
 </template>

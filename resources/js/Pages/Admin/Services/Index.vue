@@ -4,7 +4,7 @@ import { Head, Link, router } from '@inertiajs/vue3'
 import { route } from 'ziggy-js'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import SearchBar from '@/Components/Admin/SearchBar.vue'
-import Pagination from '@/Components/Admin/Pagination.vue'
+import AdvancedPagination from '@/Components/Admin/AdvancedPagination.vue'
 import ConfirmModal from '@/Components/Admin/ConfirmModal.vue'
 import {
   Plus, Edit, Trash2, Eye, CheckCircle, XCircle,
@@ -27,8 +27,20 @@ const props = defineProps({
 })
 
 const search = ref(props.filters?.search || '')
+const perPage = ref(props.filters?.per_page || 7)
 const showDeleteModal = ref(false)
 const serviceToDelete = ref(null)
+
+/**
+ * Gérer le changement du nombre d'éléments par page
+ */
+const handlePerPageChange = (newPerPage) => {
+  perPage.value = newPerPage
+  router.get(route('admin.services.index'),
+    { search: search.value, per_page: newPerPage },
+    { preserveState: true, replace: true }
+  )
+}
 
 // Recherche avec debounce
 let searchTimeout = null
@@ -36,7 +48,7 @@ const handleSearch = (value) => {
   clearTimeout(searchTimeout)
   searchTimeout = setTimeout(() => {
     router.get(route('admin.services.index'),
-      { search: value },
+      { search: value, per_page: perPage.value },
       { preserveState: true, replace: true }
     )
   }, 500)
@@ -224,7 +236,12 @@ const formatNumber = (num) => {
 
       <!-- Pagination -->
       <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
-        <Pagination :links="services?.links" :meta="services?.meta" />
+        <AdvancedPagination
+          :links="services?.links"
+          :meta="services?.meta"
+          :current-per-page="perPage"
+          @per-page-change="handlePerPageChange"
+        />
       </div>
     </div>
 

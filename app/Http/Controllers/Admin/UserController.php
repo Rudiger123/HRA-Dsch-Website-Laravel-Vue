@@ -41,14 +41,17 @@ class UserController extends Controller
             $query->where('is_active', $request->is_active);
         }
 
-        $users = $query->latest()->paginate(15);
+        // Pagination avec nombre d'éléments par page configurable (défaut 7)
+        $perPage = $request->get('per_page', 7);
+        $perPage = min($perPage, 100); // Limite max 100
+        $users = $query->latest()->paginate($perPage);
 
         $roles = Role::all(['id', 'name']);
 
         return Inertia::render('Admin/Users/Index', [
             'users' => $users,
             'roles' => $roles,
-            'filters' => $request->only(['search', 'role', 'is_active']),
+            'filters' => $request->only(['search', 'role', 'is_active', 'per_page']),
         ]);
     }
 

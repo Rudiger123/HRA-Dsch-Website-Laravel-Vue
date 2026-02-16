@@ -43,15 +43,30 @@ class ActivityLogController extends Controller
             ]);
         }
 
-        $activities = $query->latest()->paginate(30);
+        // Pagination avec nombre d'éléments par page configurable (défaut 7)
+        $perPage = $request->get('per_page', 7);
+        $perPage = min($perPage, 100); // Limite max 100
+        $activities = $query->latest()->paginate($perPage);
 
         // Liste des utilisateurs pour filtre
         $users = User::select('id', 'name')->get();
 
         return Inertia::render('Admin/ActivityLog/Index', [
-            'activities' => $activities,
+            'activities' => [
+                'data' => $activities->items(),
+                'links' => $activities->linkCollection()->toArray(),
+                'meta' => [
+                    'current_page' => $activities->currentPage(),
+                    'from' => $activities->firstItem(),
+                    'last_page' => $activities->lastPage(),
+                    'per_page' => $activities->perPage(),
+                    'to' => $activities->lastItem(),
+                    'total' => $activities->total(),
+                    'path' => $activities->path(),
+                ],
+            ],
             'users' => $users,
-            'filters' => $request->only(['search', 'causer_id', 'log_name', 'date_debut', 'date_fin']),
+            'filters' => $request->only(['search', 'causer_id', 'log_name', 'date_debut', 'date_fin', 'per_page']),
         ]);
     }
 

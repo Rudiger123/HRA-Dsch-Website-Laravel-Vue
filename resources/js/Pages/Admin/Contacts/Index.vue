@@ -4,7 +4,7 @@ import { Head, Link, router } from '@inertiajs/vue3'
 import { route } from 'ziggy-js'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import SearchBar from '@/Components/Admin/SearchBar.vue'
-import Pagination from '@/Components/Admin/Pagination.vue'
+import AdvancedPagination from '@/Components/Admin/AdvancedPagination.vue'
 import {
   Mail, MailOpen, Eye, Trash2,
   Clock, User, Phone
@@ -17,6 +17,7 @@ const props = defineProps({
 })
 
 const search = ref(props.filters?.search || '')
+const perPage = ref(props.filters?.per_page || 7)
 
 // Recherche
 let searchTimeout = null
@@ -24,10 +25,21 @@ const handleSearch = (value) => {
   clearTimeout(searchTimeout)
   searchTimeout = setTimeout(() => {
     router.get(route('admin.contacts.index'),
-      { search: value },
+      { search: value, per_page: perPage.value },
       { preserveState: true, replace: true }
     )
   }, 500)
+}
+
+// Filtre lu
+const handleLuChange = (value) => {
+  router.get(route('admin.contacts.index'), { lu: value, per_page: perPage.value }, { preserveState: true })
+}
+
+// Changement du nombre d'éléments par page
+const handlePerPageChange = (newPerPage) => {
+  perPage.value = newPerPage
+  router.get(route('admin.contacts.index'), { per_page: newPerPage }, { preserveState: true })
 }
 
 // Format date
@@ -98,7 +110,7 @@ const toggleLu = (contact) => {
           />
         </div>
         <select
-          @change="router.get(route('admin.contacts.index'), { lu: $event.target.value })"
+          @change="handleLuChange($event.target.value)"
           class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
         >
           <option value="">Tous les messages</option>
@@ -184,7 +196,7 @@ const toggleLu = (contact) => {
 
     <!-- Pagination -->
     <div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <Pagination :links="contacts.links" :meta="contacts.meta" />
+      <AdvancedPagination :links="contacts.links" :meta="contacts.meta" :current-per-page="perPage" @per-page-change="handlePerPageChange" />
     </div>
   </AdminLayout>
 </template>

@@ -64,7 +64,10 @@ class RdvRequestController extends Controller
         $sortDirection = $request->get('direction', 'desc');
         $query->orderBy($sortField, $sortDirection);
 
-        $rdvRequests = $query->paginate(20);
+        // Pagination avec nombre d'éléments par page configurable (défaut 7)
+        $perPage = $request->get('per_page', 7);
+        $perPage = min($perPage, 100); // Limite max 100
+        $rdvRequests = $query->paginate($perPage);
 
         // Services pour filtre
         $services = Service::where('actif', true)->orderBy('ordre')->get(['id', 'nom']);

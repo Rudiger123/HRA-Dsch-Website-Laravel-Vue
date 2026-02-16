@@ -4,7 +4,7 @@ import { Head, Link, router } from '@inertiajs/vue3'
 import { route } from 'ziggy-js'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import SearchBar from '@/Components/Admin/SearchBar.vue'
-import Pagination from '@/Components/Admin/Pagination.vue'
+import AdvancedPagination from '@/Components/Admin/AdvancedPagination.vue'
 import ConfirmModal from '@/Components/Admin/ConfirmModal.vue'
 import {
   Plus, Edit, Trash2, Eye, CheckCircle, XCircle,
@@ -20,6 +20,7 @@ const props = defineProps({
 const search = ref(props.filters?.search || '')
 const showDeleteModal = ref(false)
 const medecinToDelete = ref(null)
+const perPage = ref(props.filters?.per_page || 7)
 
 // Recherche avec debounce
 let searchTimeout = null
@@ -27,7 +28,7 @@ const handleSearch = (value) => {
   clearTimeout(searchTimeout)
   searchTimeout = setTimeout(() => {
     router.get(route('admin.medecins.index'),
-      { search: value },
+      { search: value, per_page: perPage.value },
       { preserveState: true, replace: true }
     )
   }, 500)
@@ -53,9 +54,23 @@ const deleteMedecin = () => {
 // Filtre par spécialité
 const filterBySpecialite = (specialite) => {
   router.get(route('admin.medecins.index'),
-    { specialite },
+    { specialite, per_page: perPage.value },
     { preserveState: true }
   )
+}
+
+// Filtre par statut
+const handleActifChange = (value) => {
+  router.get(route('admin.medecins.index'),
+    { actif: value, per_page: perPage.value },
+    { preserveState: true }
+  )
+}
+
+// Changement du nombre d'éléments par page
+const handlePerPageChange = (newPerPage) => {
+  perPage.value = newPerPage
+  router.get(route('admin.medecins.index'), { per_page: newPerPage }, { preserveState: true })
 }
 </script>
 
@@ -98,7 +113,7 @@ const filterBySpecialite = (specialite) => {
           </option>
         </select>
         <select
-          @change="router.get(route('admin.medecins.index'), { actif: $event.target.value })"
+          @change="handleActifChange($event.target.value)"
           class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
         >
           <option value="">Tous les statuts</option>
@@ -213,7 +228,7 @@ const filterBySpecialite = (specialite) => {
 
     <!-- Pagination -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <Pagination :links="medecins.links" :meta="medecins.meta" />
+      <AdvancedPagination :links="medecins.links" :meta="medecins.meta" :current-per-page="perPage" @per-page-change="handlePerPageChange" />
     </div>
 
     <!-- Modal confirmation suppression -->

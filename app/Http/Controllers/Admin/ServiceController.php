@@ -39,11 +39,14 @@ class ServiceController extends Controller
         $sortDirection = $request->get('direction', 'asc');
         $query->orderBy($sortField, $sortDirection);
 
-        $services = $query->paginate(15);
+        // Pagination avec nombre d'éléments par page configurable (défaut 7)
+        $perPage = $request->get('per_page', 7);
+        $perPage = min($perPage, 100); // Limite max 100
+        $services = $query->paginate($perPage);
 
         return Inertia::render('Admin/Services/Index', [
             'services' => $services,
-            'filters' => $request->only(['search', 'actif', 'sort', 'direction']),
+            'filters' => $request->only(['search', 'actif', 'sort', 'direction', 'per_page']),
         ]);
     }
 

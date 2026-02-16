@@ -38,7 +38,10 @@ class ContactController extends Controller
         $sortDirection = $request->get('direction', 'desc');
         $query->orderBy($sortField, $sortDirection);
 
-        $contacts = $query->paginate(20);
+        // Pagination avec nombre d'éléments par page configurable (défaut 7)
+        $perPage = $request->get('per_page', 7);
+        $perPage = min($perPage, 100); // Limite max 100
+        $contacts = $query->paginate($perPage);
 
         // Statistiques
         $stats = [
@@ -50,7 +53,7 @@ class ContactController extends Controller
         return Inertia::render('Admin/Contacts/Index', [
             'contacts' => $contacts,
             'stats' => $stats,
-            'filters' => $request->only(['search', 'lu', 'sort', 'direction']),
+            'filters' => $request->only(['search', 'lu', 'sort', 'direction', 'per_page']),
         ]);
     }
 

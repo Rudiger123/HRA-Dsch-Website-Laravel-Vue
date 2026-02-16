@@ -153,52 +153,65 @@ const animateStats = () => {
         <!-- Bande de valeurs clés - Remplace les infos de contact (déjà en haut) -->
         <section class="bg-gradient-to-r from-gray-50 via-white to-gray-50 -mt-1 py-12 shadow-lg relative z-10 border-b-2 border-gray-100">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <!-- Valeur 1: Réactivité -->
-                    <div class="flex items-center gap-4 group cursor-pointer">
-                        <div class="flex-shrink-0">
-                            <div class="bg-gradient-to-br from-primary-600 to-primary-700 rounded-full p-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                                <Zap class="w-7 h-7 text-white" />
+                <!-- Points clés et témoignage rapide -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <!-- Côté gauche : Points clés différents -->
+                    <div class="space-y-4">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-6">Pourquoi HRAD Dschang ?</h3>
+
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center h-10 w-10 rounded-lg bg-primary-600">
+                                    <CheckCircle class="w-6 h-6 text-white" />
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">Accès facile & rapide</h4>
+                                <p class="text-sm text-gray-600">Prise de rendez-vous en ligne en 2 minutes</p>
                             </div>
                         </div>
-                        <div class="flex-1">
-                            <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Réactivité Garantie</div>
-                            <div class="text-2xl font-bold text-gray-900 group-hover:text-primary-600 transition-colors">
-                                Réponse en <span class="text-primary-600">2h</span>
+
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center h-10 w-10 rounded-lg bg-secondary-600">
+                                    <CheckCircle class="w-6 h-6 text-white" />
+                                </div>
                             </div>
-                            <p class="text-sm text-gray-600 mt-1">Pour toutes vos demandes</p>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">Tarifs transparents</h4>
+                                <p class="text-sm text-gray-600">Consultation & imagerie à prix compétitifs</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center h-10 w-10 rounded-lg bg-danger-600">
+                                    <CheckCircle class="w-6 h-6 text-white" />
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">Dossiers médicaux sécurisés</h4>
+                                <p class="text-sm text-gray-600">Vos données protégées avec stricte confidentialité</p>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Valeur 2: Excellence & Certifications -->
-                    <div class="flex items-center gap-4 group cursor-pointer">
-                        <div class="flex-shrink-0">
-                            <div class="bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-full p-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                                <Award class="w-7 h-7 text-white" />
-                            </div>
+                    <!-- Côté droit : Témoignage vraiment impactant -->
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-8 rounded-2xl border border-indigo-200 shadow-lg">
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="text-yellow-400 text-lg">★★★★★</div>
                         </div>
-                        <div class="flex-1">
-                            <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Excellence Médicale</div>
-                            <div class="text-2xl font-bold text-gray-900 group-hover:text-secondary-600 transition-colors">
-                                <span class="text-secondary-600">50+</span> Professionnels
+                        <p class="text-gray-800 font-semibold mb-6 text-lg leading-relaxed">
+                            "HRAD Dschang m'a sauvé la vie. Lors de mon accident de 2019, l'équipe d'urgence a réagi en moins de 15 minutes. Vraiment professionnels et humains."
+                        </p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center text-white font-bold">
+                                MN
                             </div>
-                            <p class="text-sm text-gray-600 mt-1">Équipe certifiée et expérimentée</p>
-                        </div>
-                    </div>
-
-                    <!-- Valeur 3: Services Complets -->
-                    <div class="flex items-center gap-4 group cursor-pointer">
-                        <div class="flex-shrink-0">
-                            <div class="bg-gradient-to-br from-danger-500 to-danger-600 rounded-full p-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                                <Stethoscope class="w-7 h-7 text-white" />
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900">Madeleine Nguem</p>
+                                <p class="text-xs text-gray-600">Patient depuis 5 ans</p>
                             </div>
-                        </div>
-                        <div class="flex-1">
-                            <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Services Complets</div>
-                            <div class="text-2xl font-bold text-gray-900 group-hover:text-danger-600 transition-colors">
-                                <span class="text-danger-600">15+</span> Spécialités
-                            </div>
-                            <p class="text-sm text-gray-600 mt-1">Pour tous vos besoins de santé</p>
                         </div>
                     </div>
                 </div>

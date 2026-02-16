@@ -43,7 +43,10 @@ class ActualiteController extends Controller
         $sortDirection = $request->get('direction', 'desc');
         $query->orderBy($sortField, $sortDirection);
 
-        $actualites = $query->paginate(15);
+        // Pagination avec nombre d'éléments par page configurable (défaut 7)
+        $perPage = $request->get('per_page', 7);
+        $perPage = min($perPage, 100); // Limite max 100
+        $actualites = $query->paginate($perPage);
 
         // Liste des catégories pour filtre
         $categories = Actualite::select('categorie')
@@ -53,7 +56,7 @@ class ActualiteController extends Controller
         return Inertia::render('Admin/Actualites/Index', [
             'actualites' => $actualites,
             'categories' => $categories,
-            'filters' => $request->only(['search', 'categorie', 'publie', 'sort', 'direction']),
+            'filters' => $request->only(['search', 'categorie', 'publie', 'sort', 'direction', 'per_page']),
         ]);
     }
 

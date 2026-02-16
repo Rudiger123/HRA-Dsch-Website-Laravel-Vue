@@ -38,7 +38,10 @@ class MedecinController extends Controller
             $query->where('actif', $request->actif);
         }
 
-        $medecins = $query->latest()->paginate(15);
+        // Pagination avec nombre d'éléments par page configurable (défaut 7)
+        $perPage = $request->get('per_page', 7);
+        $perPage = min($perPage, 100); // Limite max 100
+        $medecins = $query->latest()->paginate($perPage);
 
         // Liste des spécialités pour filtre
         $specialites = Medecin::select('specialite')
@@ -48,7 +51,7 @@ class MedecinController extends Controller
         return Inertia::render('Admin/Medecins/Index', [
             'medecins' => $medecins,
             'specialites' => $specialites,
-            'filters' => $request->only(['search', 'specialite', 'actif']),
+            'filters' => $request->only(['search', 'specialite', 'actif', 'per_page']),
         ]);
     }
 

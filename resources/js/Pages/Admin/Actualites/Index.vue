@@ -4,7 +4,7 @@ import { Head, Link, router } from '@inertiajs/vue3'
 import { route } from 'ziggy-js'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import SearchBar from '@/Components/Admin/SearchBar.vue'
-import Pagination from '@/Components/Admin/Pagination.vue'
+import AdvancedPagination from '@/Components/Admin/AdvancedPagination.vue'
 import ConfirmModal from '@/Components/Admin/ConfirmModal.vue'
 import {
   Plus, Edit, Trash2, Eye, CheckCircle, XCircle,
@@ -20,6 +20,7 @@ const props = defineProps({
 const search = ref(props.filters?.search || '')
 const showDeleteModal = ref(false)
 const actualiteToDelete = ref(null)
+const perPage = ref(props.filters?.per_page || 7)
 
 // Recherche
 let searchTimeout = null
@@ -27,7 +28,7 @@ const handleSearch = (value) => {
   clearTimeout(searchTimeout)
   searchTimeout = setTimeout(() => {
     router.get(route('admin.actualites.index'),
-      { search: value },
+      { search: value, per_page: perPage.value },
       { preserveState: true, replace: true }
     )
   }, 500)
@@ -48,6 +49,22 @@ const deleteActualite = () => {
       }
     })
   }
+}
+
+// Filtre par catégorie
+const handleCategorieChange = (value) => {
+  router.get(route('admin.actualites.index'), { categorie: value, per_page: perPage.value }, { preserveState: true })
+}
+
+// Filtre par statut publication
+const handlePublieChange = (value) => {
+  router.get(route('admin.actualites.index'), { publie: value, per_page: perPage.value }, { preserveState: true })
+}
+
+// Changement du nombre d'éléments par page
+const handlePerPageChange = (newPerPage) => {
+  perPage.value = newPerPage
+  router.get(route('admin.actualites.index'), { per_page: newPerPage }, { preserveState: true })
 }
 
 // Toggle publié
@@ -108,7 +125,7 @@ const getCategoryColor = (categorie) => {
           />
         </div>
         <select
-          @change="router.get(route('admin.actualites.index'), { categorie: $event.target.value })"
+          @change="handleCategorieChange($event.target.value)"
           class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
         >
           <option value="">Toutes les catégories</option>
@@ -117,7 +134,7 @@ const getCategoryColor = (categorie) => {
           </option>
         </select>
         <select
-          @change="router.get(route('admin.actualites.index'), { publie: $event.target.value })"
+          @change="handlePublieChange($event.target.value)"
           class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
         >
           <option value="">Tous les statuts</option>
@@ -243,7 +260,7 @@ const getCategoryColor = (categorie) => {
 
       <!-- Pagination -->
       <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
-        <Pagination :links="actualites.links" :meta="actualites.meta" />
+        <AdvancedPagination :links="actualites.links" :meta="actualites.meta" :current-per-page="perPage" @per-page-change="handlePerPageChange" />
       </div>
     </div>
 
