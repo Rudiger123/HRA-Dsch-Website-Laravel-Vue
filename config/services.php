@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+    'hospital' => [
+        'admin_email' => env('ADMIN_EMAIL', 'admin@hradschang.cm'),
+        'admin_name' => env('ADMIN_NAME', 'Administration HRA Dschang'),
+        'name' => 'HRA Dschang',
+        'phone' => '+237 233 44 55 66',
+        'address' => 'Dschang, Région de l\'Ouest, Cameroun',
+        'website' => env('APP_URL', 'https://hradschang.cm'),
+    ],
+
 ];

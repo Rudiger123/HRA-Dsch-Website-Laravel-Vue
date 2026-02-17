@@ -370,6 +370,27 @@ Route::get('/actualites', function (Request $request) {
     }
 
     $actualites = $query->orderBy('date_publication', 'desc')->paginate(9);
+
+    // Transformer les données pour inclure les attributs calculés
+    $actualites->getCollection()->transform(function($actualite) {
+        return [
+            'id' => $actualite->id,
+            'titre' => $actualite->titre,
+            'slug' => $actualite->slug,
+            'extrait' => $actualite->extrait,
+            'image' => $actualite->image,
+            'video' => $actualite->video,
+            'video_type' => $actualite->video_type,
+            'categorie' => $actualite->categorie,
+            'auteur' => $actualite->auteur,
+            'date_publication' => $actualite->date_publication,
+            'date_formattee' => $actualite->date_formattee,
+            'vues' => $actualite->vues,
+            'likes_count' => $actualite->likes_count,
+            'temps_lecture' => $actualite->temps_lecture,
+        ];
+    });
+
     $categories = \App\Models\Actualite::where('publie', true)->select('categorie')->distinct()->pluck('categorie');
 
     return Inertia::render('Actualites/Index', [
@@ -395,7 +416,36 @@ Route::get('/actualites/{slug}', function ($slug) {
                             ->where('id', '!=', $actualite->id)
                             ->orderBy('date_publication', 'desc')
                             ->limit(3)
-                            ->get();
+                            ->get()
+                            ->map(function($a) {
+                                return [
+                                    'id' => $a->id,
+                                    'titre' => $a->titre,
+                                    'slug' => $a->slug,
+                                    'extrait' => $a->extrait,
+                                    'image' => $a->image,
+                                    'video' => $a->video,
+                                    'video_type' => $a->video_type,
+                                    'categorie' => $a->categorie,
+                                    'date_publication' => $a->date_publication,
+                                    'date_formattee' => $a->date_formattee,
+                                    'vues' => $a->vues,
+                                    'likes_count' => $a->likes_count,
+                                    'temps_lecture' => $a->temps_lecture,
+                                ];
+                            });
+
+    // Statistiques de likes
+    $likeStats = [
+        'total' => $actualite->likes_count,
+        'by_type' => [
+            'like' => $actualite->likesByType('like'),
+            'love' => $actualite->likesByType('love'),
+            'wow' => $actualite->likesByType('wow'),
+            'sad' => $actualite->likesByType('sad'),
+            'angry' => $actualite->likesByType('angry'),
+        ]
+    ];
 
     SEOMeta::setTitle($actualite->titre . ' | HRA Dschang');
     SEOMeta::setDescription($actualite->extrait);
@@ -421,7 +471,8 @@ Route::get('/actualites/{slug}', function ($slug) {
 
     return Inertia::render('Actualites/Show', [
         'actualite' => $actualite,
-        'similaires' => $similaires
+        'similaires' => $similaires,
+        'likeStats' => $likeStats
     ]);
 })->name('actualites.show');
 

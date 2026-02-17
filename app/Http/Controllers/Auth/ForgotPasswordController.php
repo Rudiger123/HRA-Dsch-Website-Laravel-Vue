@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\PasswordResetMail;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class ForgotPasswordController extends Controller
@@ -30,12 +34,32 @@ class ForgotPasswordController extends Controller
             'email.exists' => 'Aucun compte trouvé avec cet email',
         ]);
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        // Trouver l'utilisateur
+        $user = User::where('email', $request->email)->first();
 
-        return $status === Password::RESET_LINK_SENT
-            ? back()->with('status', 'Un lien de réinitialisation a été envoyé à votre adresse email.')
-            : back()->withErrors(['email' => 'Impossible d\'envoyer le lien de réinitialisation.']);
+        if (!$user) {
+            return back()->withErrors(['email' => 'Aucun compte trouvé avec cet email']);
+        }
+
+        // Générer un token de réinitialisation
+        $token = Password::getRepository()->create($user);
+
+        // Envoyer le mail personnalisé
+        try {
+            Mail::send(new PasswordResetMail(
+                token: $token,
+                email: $user->email,
+                userName: $user->name
+            ));
+
+            // Logger l'activité
+            activity()
+                ->causedBy($user)
+                ->log('Demande de réinitialisation de mot de passe');
+
+            return back()->with('status', 'Un lien de réinitialisation a été envoyé à votre adresse email.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['email' => 'Impossible d\'envoyer le lien de réinitialisation. Veuillez réessayer plus tard.']);
+        }
     }
 }

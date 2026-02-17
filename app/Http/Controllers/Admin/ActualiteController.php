@@ -97,6 +97,8 @@ class ActualiteController extends Controller
             'categorie' => 'required|string',
             'auteur' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'video' => 'nullable|file|mimes:mp4,webm,mov,avi,flv|max:52428800', // 50MB max
+            'video_type' => 'nullable|in:upload,youtube,vimeo',
             'publie' => 'boolean',
             'date_publication' => 'nullable|date',
         ], [
@@ -110,7 +112,9 @@ class ActualiteController extends Controller
             'auteur.required' => 'L\'auteur est obligatoire',
             'image.image' => 'Le fichier doit être une image',
             'image.mimes' => 'Format autorisé : JPEG, JPG, PNG, WEBP',
-            'image.max' => 'Taille maximale : 2MB',
+            'image.max' => 'Taille maximale image : 2MB',
+            'video.mimes' => 'Format vidéo autorisé : MP4, WebM, MOV, AVI, FLV',
+            'video.max' => 'Taille maximale vidéo : 50MB',
         ]);
 
         // Upload image
@@ -122,6 +126,18 @@ class ActualiteController extends Controller
             $filename = Str::uuid() . '.' . $image->getClientOriginalExtension();
             $image->move($dir, $filename);
             $validated['image'] = '/images/actualites/' . $filename;
+        }
+
+        // Upload vidéo
+        if ($request->hasFile('video')) {
+            $video = $request->file('video');
+            $dir = public_path('videos/actualites');
+            if (!is_dir($dir)) mkdir($dir, 0755, true);
+
+            $filename = Str::uuid() . '.' . $video->getClientOriginalExtension();
+            $video->move($dir, $filename);
+            $validated['video'] = '/videos/actualites/' . $filename;
+            $validated['video_type'] = 'upload';
         }
 
         // Générer slug
@@ -195,6 +211,8 @@ class ActualiteController extends Controller
             'categorie' => 'required|string',
             'auteur' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'video' => 'nullable|file|mimes:mp4,webm,mov,avi,flv|max:52428800',
+            'video_type' => 'nullable|in:upload,youtube,vimeo',
             'publie' => 'boolean',
             'date_publication' => 'nullable|date',
         ]);
@@ -213,6 +231,23 @@ class ActualiteController extends Controller
             $filename = Str::uuid() . '.' . $image->getClientOriginalExtension();
             $image->move($dir, $filename);
             $validated['image'] = '/images/actualites/' . $filename;
+        }
+
+        // Upload nouvelle vidéo
+        if ($request->hasFile('video')) {
+            // Supprimer ancienne vidéo si upload local
+            if ($actualite->video && $actualite->video_type === 'upload' && file_exists(public_path($actualite->video))) {
+                unlink(public_path($actualite->video));
+            }
+
+            $video = $request->file('video');
+            $dir = public_path('videos/actualites');
+            if (!is_dir($dir)) mkdir($dir, 0755, true);
+
+            $filename = Str::uuid() . '.' . $video->getClientOriginalExtension();
+            $video->move($dir, $filename);
+            $validated['video'] = '/videos/actualites/' . $filename;
+            $validated['video_type'] = 'upload';
         }
 
         // Regénérer slug si titre changé
@@ -242,6 +277,11 @@ class ActualiteController extends Controller
         // Supprimer image
         if ($actualite->image && file_exists(public_path($actualite->image))) {
             unlink(public_path($actualite->image));
+        }
+
+        // Supprimer vidéo si upload local
+        if ($actualite->video && $actualite->video_type === 'upload' && file_exists(public_path($actualite->video))) {
+            unlink(public_path($actualite->video));
         }
 
         $actualite->delete();

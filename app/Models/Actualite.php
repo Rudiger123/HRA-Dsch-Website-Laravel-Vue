@@ -16,17 +16,21 @@ class Actualite extends Model
         'extrait',
         'contenu',
         'image',
+        'video',
+        'video_type',
         'categorie',
         'auteur',
         'publie',
         'date_publication',
-        'vues'
+        'vues',
+        'likes_count'
     ];
 
     protected $casts = [
         'date_publication' => 'datetime',
         'publie' => 'boolean',
-        'vues' => 'integer'
+        'vues' => 'integer',
+        'likes_count' => 'integer'
     ];
 
     // Générer automatiquement le slug
@@ -72,6 +76,46 @@ class Actualite extends Model
         $mots = str_word_count(strip_tags($this->contenu));
         $minutes = ceil($mots / 250);
         return $minutes . ' min de lecture';
+    }
+
+    /**
+     * Relation: Les likes/réactions de cet article
+     */
+    public function likes()
+    {
+        return $this->hasMany(ActualiteLike::class);
+    }
+
+    /**
+     * Compter les likes par type de réaction
+     */
+    public function likesByType($reactionType = null)
+    {
+        $query = $this->likes();
+        if ($reactionType) {
+            $query->where('reaction_type', $reactionType);
+        }
+        return $query->count();
+    }
+
+    /**
+     * Vérifier si un utilisateur a déjà aimé
+     */
+    public function hasLiked($userIdentifier)
+    {
+        return $this->likes()
+                    ->where('user_identifier', $userIdentifier)
+                    ->exists();
+    }
+
+    /**
+     * Obtenir la réaction d'un utilisateur
+     */
+    public function getUserReaction($userIdentifier)
+    {
+        return $this->likes()
+                    ->where('user_identifier', $userIdentifier)
+                    ->first();
     }
 }
 

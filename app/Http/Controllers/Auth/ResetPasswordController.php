@@ -18,7 +18,7 @@ class ResetPasswordController extends Controller
     {
         return Inertia::render('Auth/ResetPassword', [
             'token' => $token,
-            'email' => $request->email,
+            'email' => $request->query('email', ''),
         ]);
     }
 
@@ -28,7 +28,7 @@ class ResetPasswordController extends Controller
     public function reset(Request $request)
     {
         $request->validate([
-            'token' => 'required',
+            'token' => 'required|string',
             'email' => 'required|email',
             'password' => ['required', 'confirmed', PasswordRule::min(8)],
         ], [
@@ -37,6 +37,7 @@ class ResetPasswordController extends Controller
             'password.required' => 'Le mot de passe est obligatoire',
             'password.min' => 'Le mot de passe doit contenir au moins 8 caractères',
             'password.confirmed' => 'Les mots de passe ne correspondent pas',
+            'token.required' => 'Token invalide',
         ]);
 
         $status = Password::reset(
@@ -53,8 +54,10 @@ class ResetPasswordController extends Controller
             }
         );
 
-        return $status === Password::PASSWORD_RESET
-            ? redirect()->route('login')->with('status', 'Votre mot de passe a été réinitialisé avec succès.')
-            : back()->withErrors(['email' => 'Le lien de réinitialisation est invalide ou a expiré.']);
+        if ($status === Password::PASSWORD_RESET) {
+            return redirect()->route('login')->with('status', 'Votre mot de passe a été réinitialisé avec succès. Veuillez vous connecter.');
+        }
+
+        return back()->withErrors(['email' => 'Le lien de réinitialisation est invalide, expiré ou a déjà été utilisé. Veuillez demander un nouveau lien.']);
     }
 }

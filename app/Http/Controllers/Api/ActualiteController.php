@@ -31,6 +31,26 @@ class ActualiteController extends Controller
 
         $actualites = $query->paginate(9);
 
+        // Ajouter les attributs calculés pour chaque actualité
+        $actualites->getCollection()->transform(function($actualite) {
+            return [
+                'id' => $actualite->id,
+                'titre' => $actualite->titre,
+                'slug' => $actualite->slug,
+                'extrait' => $actualite->extrait,
+                'image' => $actualite->image,
+                'video' => $actualite->video,
+                'video_type' => $actualite->video_type,
+                'categorie' => $actualite->categorie,
+                'auteur' => $actualite->auteur,
+                'date_publication' => $actualite->date_publication,
+                'date_formattee' => $actualite->date_formattee,
+                'vues' => $actualite->vues,
+                'likes_count' => $actualite->likes_count,
+                'temps_lecture' => $actualite->temps_lecture,
+            ];
+        });
+
         return response()->json($actualites);
     }
 
@@ -51,10 +71,54 @@ class ActualiteController extends Controller
                                 ->categorie($actualite->categorie)
                                 ->where('id', '!=', $actualite->id)
                                 ->limit(3)
-                                ->get();
+                                ->get()
+                                ->map(function($a) {
+                                    return [
+                                        'id' => $a->id,
+                                        'titre' => $a->titre,
+                                        'slug' => $a->slug,
+                                        'extrait' => $a->extrait,
+                                        'image' => $a->image,
+                                        'categorie' => $a->categorie,
+                                        'date_publication' => $a->date_publication,
+                                        'date_formattee' => $a->date_formattee,
+                                        'vues' => $a->vues,
+                                        'likes_count' => $a->likes_count,
+                                        'temps_lecture' => $a->temps_lecture,
+                                    ];
+                                });
+
+        // Statistiques de likes
+        $likeStats = [
+            'total' => $actualite->likes_count,
+            'by_type' => [
+                'like' => $actualite->likesByType('like'),
+                'love' => $actualite->likesByType('love'),
+                'wow' => $actualite->likesByType('wow'),
+                'sad' => $actualite->likesByType('sad'),
+                'angry' => $actualite->likesByType('angry'),
+            ]
+        ];
 
         return response()->json([
-            'actualite' => $actualite,
+            'actualite' => [
+                'id' => $actualite->id,
+                'titre' => $actualite->titre,
+                'slug' => $actualite->slug,
+                'extrait' => $actualite->extrait,
+                'contenu' => $actualite->contenu,
+                'image' => $actualite->image,
+                'video' => $actualite->video,
+                'video_type' => $actualite->video_type,
+                'categorie' => $actualite->categorie,
+                'auteur' => $actualite->auteur,
+                'date_publication' => $actualite->date_publication,
+                'date_formattee' => $actualite->date_formattee,
+                'vues' => $actualite->vues,
+                'likes_count' => $actualite->likes_count,
+                'temps_lecture' => $actualite->temps_lecture,
+            ],
+            'likes_stats' => $likeStats,
             'similaires' => $similaires
         ]);
     }

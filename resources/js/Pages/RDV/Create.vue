@@ -25,6 +25,7 @@ const form = useForm({
     nom_patient: '',
     age: null,
     telephone: '',
+    email: '',
     service_id: '',
     motif: '',
     confirmation_whatsapp: true
@@ -267,6 +268,23 @@ const formatPhoneDisplay = (phone) => {
                         <p v-else class="text-gray-600 text-sm mt-1">
                             Format : +237 suivi de 9 chiffres
                         </p>
+                    </div>
+
+                    <!-- Email (optionnel) -->
+                    <div>
+                        <label for="email" class="block font-medium text-gray-700 mb-2">
+                            Email <span class="text-gray-500 text-sm">(optionnel)</span>
+                        </label>
+                        <input
+                            id="email"
+                            v-model="form.email"
+                            type="email"
+                            placeholder="votre@email.com"
+                            class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-all"
+                            :class="{ 'border-red-500': fieldErrors.email }"
+                        />
+                        <p class="mt-1 text-sm text-gray-500">Pour recevoir une confirmation par email</p>
+                        <p v-if="fieldErrors.email" class="mt-2 text-sm text-red-600">{{ fieldErrors.email }}</p>
                     </div>
 
                     <!-- Service Médical -->

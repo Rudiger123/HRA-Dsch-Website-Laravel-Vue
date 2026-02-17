@@ -17,6 +17,7 @@ class RdvRequest extends Model
         'nom_patient',
         'age',
         'telephone',
+        'email',
         'service_id',
         'motif',
         'confirmation_whatsapp',

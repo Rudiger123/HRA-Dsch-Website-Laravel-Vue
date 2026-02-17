@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\NouveauMessageAdmin;
 use App\Models\Contact;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class ContactController extends Controller
@@ -25,6 +27,14 @@ class ContactController extends Controller
         ]);
 
         $contact = Contact::create($validated);
+
+        // Envoyer email à l'admin
+        try {
+            Mail::to(config('services.hospital.admin_email'))
+                ->send(new NouveauMessageAdmin($contact));
+        } catch (\Exception $e) {
+            \Log::error('Erreur envoi email contact: ' . $e->getMessage());
+        }
 
         return redirect()->back()->with('success', 'Message envoyé avec succès. Nous vous répondrons dans les 24 heures.');
     }

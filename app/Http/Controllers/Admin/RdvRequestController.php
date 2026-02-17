@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\RdvStatusChange;
 use App\Models\RdvRequest;
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\Models\Activity;
@@ -113,7 +115,8 @@ class RdvRequestController extends Controller
      * Mettre à jour le statut d'une demande RDV
      */
     public function updateStatus(Request $request, RdvRequest $rdvRequest)
-    {        $this->authorize('manage_rdv');        $this->authorize('manage_rdv');
+    {
+        $this->authorize('manage_rdv');
 
         $validated = $request->validate([
             'statut' => 'required|in:en_attente,confirme,annule',
@@ -123,6 +126,16 @@ class RdvRequestController extends Controller
         $ancienStatut = $rdvRequest->statut;
 
         $rdvRequest->update($validated);
+
+        // Envoyer email au patient si statut changé
+        try {
+            if ($rdvRequest->email && in_array($validated['statut'], ['confirme', 'annule'])) {
+                Mail::to($rdvRequest->email)
+                    ->send(new RdvStatusChange($rdvRequest));
+            }
+        } catch (\Exception $e) {
+            \Log::error('Erreur envoi email statut RDV: ' . $e->getMessage());
+        }
 
         // Logger l'activité
         activity()

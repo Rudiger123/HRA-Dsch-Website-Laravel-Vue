@@ -17,6 +17,8 @@ const form = useForm({
   categorie: '',
   auteur: 'Équipe HRA',
   image: null,
+  video: null,
+  video_type: 'upload',
   publie: false,
   date_publication: new Date().toISOString().split('T')[0],
 })
@@ -172,6 +174,50 @@ const submit = () => {
               label="Image de couverture"
               :error="form.errors.image"
             />
+          </div>
+
+          <!-- Vidéo -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              Vidéo (optionnel)
+            </label>
+            <p class="text-xs text-gray-600 mb-4">
+              Formats acceptés: MP4, WebM, MOV, AVI, FLV (Max 50MB)
+            </p>
+
+            <!-- Input vidéo -->
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-primary-400 transition">
+              <input
+                type="file"
+                accept="video/mp4,video/webm,video/quicktime,video/x-msvideo,.flv"
+                @change="(e) => form.video = e.target.files[0]"
+                class="hidden"
+                id="video-input"
+              />
+              <label for="video-input" class="cursor-pointer">
+                <svg v-if="!form.video" class="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p v-if="!form.video" class="text-gray-600">
+                  Cliquez pour sélectionner une vidéo
+                </p>
+                <p v-else class="text-green-600 font-semibold">
+                  ✓ {{ form.video.name }}
+                </p>
+              </label>
+            </div>
+            <p v-if="form.errors.video" class="mt-2 text-sm text-red-600">{{ form.errors.video }}</p>
+
+            <!-- Bouton pour effacer -->
+            <button
+              v-if="form.video"
+              type="button"
+              @click="form.video = null"
+              class="mt-3 text-sm text-red-600 hover:text-red-700 font-medium"
+            >
+              Supprimer la vidéo
+            </button>
           </div>
 
           <!-- Actions -->

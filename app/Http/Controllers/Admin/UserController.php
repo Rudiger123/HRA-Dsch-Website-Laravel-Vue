@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\NouveauCompteUtilisateur;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
@@ -117,6 +119,14 @@ class UserController extends Controller
 
         // Assigner rôle
         $user->assignRole($validated['role']);
+
+        // Envoyer email au nouveau compte
+        try {
+            Mail::to($user->email)
+                ->send(new NouveauCompteUtilisateur($user, $validated['password']));
+        } catch (\Exception $e) {
+            \Log::error('Erreur envoi email nouveau compte: ' . $e->getMessage());
+        }
 
         // Logger l'activité
         activity()
